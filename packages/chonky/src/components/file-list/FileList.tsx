@@ -3,21 +3,45 @@ import { useSelector } from 'react-redux';
 import AutoSizer from 'react-virtualized-auto-sizer';
 
 import { ChonkyActions } from '../../action-definitions/index';
-import { selectCurrentFolder, selectFileViewConfig, selectors } from '../../redux/selectors';
+import {
+    selectCurrentFolder,
+    selectFileViewConfig,
+    selectors,
+} from '../../redux/selectors';
 import { FileViewMode } from '../../types/file-view.types';
 import { ChonkyIconName } from '../../types/icons.types';
 import { useFileDrop } from '../../util/dnd';
 import { ChonkyIconContext } from '../../util/icon-helper';
 import {
-    c, getStripeGradient, makeGlobalChonkyStyles, makeLocalChonkyStyles
+    c,
+    getStripeGradient,
+    makeGlobalChonkyStyles,
+    makeLocalChonkyStyles,
 } from '../../util/styles';
 import { FileListEmpty } from './FileListEmpty';
 import { GridContainer } from './GridContainer';
 import { ListContainer } from './ListContainer';
+import { PaginatedListContainer } from './PaginatedListContainer';
+import { PaginatedGridContainer } from './PaginatedGridContainer';
 
-export interface FileListProps {
+export interface FileListBaseProps {
     onScroll?: (e: UIEvent<HTMLDivElement>) => void;
 }
+type FileListPaginatedProps =
+    | {
+          paginated?: false;
+          hasNextPage?: never;
+          isNextPageLoading?: never;
+          loadNextPage?: never;
+      }
+    | {
+          paginated: true;
+          hasNextPage: boolean;
+          isNextPageLoading: boolean;
+          loadNextPage: (...args: any) => void;
+      };
+
+export type FileListProps = FileListBaseProps & FileListPaginatedProps;
 
 interface StyleState {
     dndCanDrop: boolean;
@@ -30,7 +54,10 @@ export const FileList: React.FC<FileListProps> = React.memo((props: FileListProp
 
     const currentFolder = useSelector(selectCurrentFolder);
     const { drop, dndCanDrop, dndIsOverCurrent } = useFileDrop({ file: currentFolder });
-    const styleState = useMemo<StyleState>(() => ({ dndCanDrop, dndIsOverCurrent }), [dndCanDrop, dndIsOverCurrent]);
+    const styleState = useMemo<StyleState>(() => ({ dndCanDrop, dndIsOverCurrent }), [
+        dndCanDrop,
+        dndIsOverCurrent,
+    ]);
 
     const localClasses = useLocalStyles(styleState);
     const classes = useStyles(viewConfig);
@@ -46,20 +73,53 @@ export const FileList: React.FC<FileListProps> = React.memo((props: FileListProp
             if (displayFileIds.length === 0) {
                 return <FileListEmpty width={width} height={viewConfig.entryHeight} />;
             } else if (viewConfig.mode === FileViewMode.List) {
+                if (props.paginated) {
+                    return (
+                        <PaginatedListContainer
+                            width={width}
+                            height={height}
+                            hasNextPage={props.hasNextPage}
+                            isNextPageLoading={props.isNextPageLoading}
+                            loadNextPage={props.loadNextPage}
+                        />
+                    );
+                }
                 return <ListContainer width={width} height={height} />;
             } else {
+                if (props.paginated) {
+                    return (
+                        <PaginatedGridContainer
+                            width={width}
+                            height={height}
+                            hasNextPage={props.hasNextPage}
+                            isNextPageLoading={props.isNextPageLoading}
+                            loadNextPage={props.loadNextPage}
+                        />
+                    );
+                }
                 return <GridContainer width={width} height={height} />;
             }
         },
-        [displayFileIds, viewConfig]
+        [displayFileIds, viewConfig, props.paginated]
     );
 
     const ChonkyIcon = useContext(ChonkyIconContext);
     return (
-        <div onScroll={onScroll} ref={drop} className={c([classes.fileListWrapper, localClasses.fileListWrapper])} role="list">
+        <div
+            onScroll={onScroll}
+            ref={drop}
+            className={c([classes.fileListWrapper, localClasses.fileListWrapper])}
+            role="list"
+        >
             <div className={localClasses.dndDropZone}>
                 <div className={localClasses.dndDropZoneIcon}>
-                    <ChonkyIcon icon={dndCanDrop ? ChonkyIconName.dndCanDrop : ChonkyIconName.dndCannotDrop} />
+                    <ChonkyIcon
+                        icon={
+                            dndCanDrop
+                                ? ChonkyIconName.dndCanDrop
+                                : ChonkyIconName.dndCannotDrop
+                        }
+                    />
                 </div>
             </div>
             <AutoSizer disableHeight={!fillParentContainer}>{listRenderer}</AutoSizer>
@@ -74,8 +134,14 @@ const useLocalStyles = makeLocalChonkyStyles(theme => ({
         background: (state: StyleState) =>
             state.dndIsOverCurrent && state.dndCanDrop
                 ? state.dndCanDrop
-                    ? getStripeGradient(theme.dnd.fileListCanDropMaskOne, theme.dnd.fileListCanDropMaskTwo)
-                    : getStripeGradient(theme.dnd.fileListCannotDropMaskOne, theme.dnd.fileListCannotDropMaskTwo)
+                    ? getStripeGradient(
+                          theme.dnd.fileListCanDropMaskOne,
+                          theme.dnd.fileListCanDropMaskTwo
+                      )
+                    : getStripeGradient(
+                          theme.dnd.fileListCannotDropMaskOne,
+                          theme.dnd.fileListCannotDropMaskTwo
+                      )
                 : 'none',
     },
     dndDropZone: {
@@ -90,8 +156,10 @@ const useLocalStyles = makeLocalChonkyStyles(theme => ({
         zIndex: 2,
     },
     dndDropZoneIcon: {
-        backgroundColor: (state: StyleState) => (state.dndCanDrop ? theme.dnd.canDropMask : theme.dnd.cannotDropMask),
-        color: (state: StyleState) => (state.dndCanDrop ? theme.dnd.canDropColor : theme.dnd.cannotDropColor),
+        backgroundColor: (state: StyleState) =>
+            state.dndCanDrop ? theme.dnd.canDropMask : theme.dnd.cannotDropMask,
+        color: (state: StyleState) =>
+            state.dndCanDrop ? theme.dnd.canDropColor : theme.dnd.cannotDropColor,
         borderRadius: theme.gridFileEntry.borderRadius,
         transform: 'translateX(-50%) translateY(-50%)',
         position: 'absolute',

@@ -3,6 +3,7 @@ export default {
 };
 
 export { MutableFS } from './demos/MutableFS';
+export { PaginatedFS } from './demos/PaginatedFS';
 // export { MutableVirtualFileSystem } from '../demos/VFSMutable';
 // export { ReadOnlyVirtualFileSystem } from '../demos/VFSReadOnly';
 // export { DarkMode } from '../demos/DarkModeVFS';
