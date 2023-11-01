@@ -1,6 +1,6 @@
 {
   "name": "@rierino-open/chonky-icon-fontawesome",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "FontAwesome icon component for Chonky file browser",
   "license": "MIT",
   "main": "dist/index.js",
