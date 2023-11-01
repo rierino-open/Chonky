@@ -105,7 +105,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/TimboKZ/Chonky.git"
+    "url": "git+https://github.com/rierino-open/Chonky.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/@rierino-open"
   },
   "bugs": {
     "url": "https://github.com/TimboKZ/Chonky/issues"
