@@ -1,5 +1,5 @@
 {
-  "name": "chonky",
+  "name": "@rierino-open/chonky",
   "version": "2.3.3",
   "description": "A File Browser component for React",
   "license": "MIT",
@@ -119,5 +119,6 @@
     "file-dialog",
     "file-browser",
     "react-component"
-  ]
+  ],
+  "gitHead": "534b843550d7b0924e0f20a1cdc0098699ce11fb"
 }
