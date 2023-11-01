@@ -1,5 +1,5 @@
 {
-  "name": "chonky-icon-fontawesome",
+  "name": "@rierino-open/chonky-icon-fontawesome",
   "version": "2.3.4",
   "description": "FontAwesome icon component for Chonky file browser",
   "license": "MIT",
@@ -90,5 +90,5 @@
     "file-browser",
     "react-component"
   ],
-  "gitHead": "534b843550d7b0924e0f20a1cdc0098699ce11fb"
+  "gitHead": "2143348fbcbea72e96be2609a643a3e4e1d0f009"
 }
