@@ -89,6 +89,7 @@ export const PaginatedListContainer: React.FC<FileListListProps> = React.memo(pr
         displayFileIds,
         width,
         getItemKey,
+        hasNextPage,
     ]);
 
     return listComponent;

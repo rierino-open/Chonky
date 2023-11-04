@@ -230,6 +230,7 @@ export const PaginatedGridContainer: React.FC<FileListGridProps> = React.memo(pr
         width,
         getItemKey,
         cellRenderer,
+        hasNextPage,
     ]);
 
     return gridComponent;
