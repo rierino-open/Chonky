@@ -100,7 +100,7 @@ export const FileList: React.FC<FileListProps> = React.memo((props: FileListProp
                 return <GridContainer width={width} height={height} />;
             }
         },
-        [displayFileIds, viewConfig, props.paginated]
+        [displayFileIds, viewConfig, props.paginated, props.hasNextPage]
     );
 
     const ChonkyIcon = useContext(ChonkyIconContext);
