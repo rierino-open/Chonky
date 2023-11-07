@@ -8,9 +8,11 @@ import { ToolbarDropdown } from './ToolbarDropdown';
 import { ToolbarInfo } from './ToolbarInfo';
 import { ToolbarSearch } from './ToolbarSearch';
 
-export interface FileToolbarProps {}
+export interface FileToolbarProps {
+    onSearch?: (text: string) => void;
+}
 
-export const FileToolbar: React.FC<FileToolbarProps> = React.memo(() => {
+export const FileToolbar: React.FC<FileToolbarProps> = React.memo(props => {
     const classes = useStyles();
     const toolbarItems = useSelector(selectToolbarItems);
 
@@ -39,7 +41,9 @@ export const FileToolbar: React.FC<FileToolbarProps> = React.memo(() => {
         <div className={classes.toolbarWrapper}>
             <div className={classes.toolbarContainer}>
                 <div className={classes.toolbarLeft}>
-                    <ToolbarSearch />
+                    <ToolbarSearch
+                        {...(props.onSearch ? { onSearch: props.onSearch } : {})}
+                    />
                     <ToolbarInfo />
                 </div>
                 <div className={classes.toolbarRight}>{toolbarItemComponents}</div>

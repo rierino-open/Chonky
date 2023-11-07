@@ -19,9 +19,11 @@ import { getI18nId, I18nNamespace } from '../../util/i18n';
 import { ChonkyIconContext } from '../../util/icon-helper';
 import { important, makeGlobalChonkyStyles } from '../../util/styles';
 
-export interface ToolbarSearchProps {}
+export interface ToolbarSearchProps {
+    onSearch?: (text: string) => void;
+}
 
-export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo(() => {
+export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo(props => {
     const intl = useIntl();
     const searchPlaceholderString = intl.formatMessage({
         id: getI18nId(I18nNamespace.Toolbar, 'searchPlaceholder'),
@@ -53,7 +55,11 @@ export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo(() => {
 
     useEffect(() => {
         setShowLoadingIndicator(false);
-        dispatch(reduxActions.setSearchString(debouncedLocalSearchString));
+        if (!props.onSearch) {
+            dispatch(reduxActions.setSearchString(debouncedLocalSearchString));
+        } else {
+            props.onSearch(debouncedLocalSearchString);
+        }
     }, [debouncedLocalSearchString, dispatch]);
 
     const handleChange = useCallback((event: React.FormEvent<HTMLInputElement>) => {
@@ -89,7 +95,11 @@ export const ToolbarSearch: React.FC<ToolbarSearchProps> = React.memo(() => {
                 startAdornment: (
                     <InputAdornment className={classes.searchIcon} position="start">
                         <ChonkyIcon
-                            icon={showLoadingIndicator ? ChonkyIconName.loading : ChonkyIconName.search}
+                            icon={
+                                showLoadingIndicator
+                                    ? ChonkyIconName.loading
+                                    : ChonkyIconName.search
+                            }
                             spin={showLoadingIndicator}
                         />
                     </InputAdornment>
